@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Toán Lớp 6: Hình Tam Giác Đều, Hình Vuông, Hình Lục Giác Đều</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #1e293b;
+            margin: 0;
+            padding: 16px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.4rem;
+        }
+        header p {
+            margin: 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        .score-bar {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        .score-text {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #0f172a;
+        }
+        .reset-btn {
+            background-color: #64748b;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .reset-btn:active {
+            background-color: #475569;
+        }
+        .question-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .level-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 999px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .level-1 { background-color: #dbeafe; color: #1e40af; }
+        .level-2 { background-color: #fef3c7; color: #92400e; }
+        .level-3 { background-color: #fae8ff; color: #86198f; }
+        .question-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 14px;
+            color: #0f172a;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-btn {
+            text-align: left;
+            background-color: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 1rem;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+        .option-btn.correct {
+            background-color: #dcfce7 !important;
+            border-color: #16a34a !important;
+            color: #14532d !important;
+            font-weight: 700;
+        }
+        .option-btn.wrong {
+            background-color: #fee2e2 !important;
+            border-color: #dc2626 !important;
+            color: #7f1d1d !important;
+            font-weight: 700;
+        }
+        .explanation {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+        }
+        .explanation.exp-correct {
+            background-color: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            color: #166534;
+        }
+        .explanation.exp-wrong {
+            background-color: #fef2f2;
+            border-left: 4px solid #dc2626;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TRẮC NGHIỆM TOÁN LỚP 6</h1>
+            <p>Chủ đề: Hình tam giác đều – Hình vuông – Hình lục giác đều</p>
+        </header>
+
+        <div class="score-bar">
+            <div class="score-text">Điểm: <span id="score">0</span> / <span id="total">15</span></div>
+            <button class="reset-btn" onclick="resetQuiz()">Làm lại từ đầu</button>
+        </div>
+
+        <div id="quiz-container"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                level: "Cơ bản",
+                levelClass: "level-1",
+                q: "Câu 1: Hình tam giác đều có bao nhiêu trục đối xứng?",
+                options: ["A. 1", "B. 2", "C. 3", "D. 6"],
+                answer: 2,
+                explain: "Hình tam giác đều có 3 trục đối xứng đi qua mỗi đỉnh và trung điểm của cạnh đối diện."
+            },
+            {
+                level: "Cơ bản",
+                levelClass: "level-1",
+                q: "Câu 2: Số đo mỗi góc ở đỉnh của một hình tam giác đều bằng bao nhiêu?",
+                options: ["A. 45°", "B. 60°", "C. 90°", "D. 120°"],
+                answer: 1,
+                explain: "Tổng ba góc trong một tam giác bằng 180°, tam giác đều có 3 góc bằng nhau nên mỗi góc là 180° : 3 = 60°."
+            },
+            {
+                level: "Cơ bản",
+                levelClass: "level-1",
+                q: "Câu 3: Phát biểu nào sau đây là SAI khi nói về hình vuông?",
+                options: [
+                    "A. Hình vuông có 4 cạnh bằng nhau.",
+                    "B. Hình vuông có 4 góc vuông.",
+                    "C. Hai đường chéo của hình vuông không bằng nhau.",
+                    "D. Hình vuông có 4 trục đối xứng."
+                ],
+                answer: 2,
+                explain: "Trong hình vuông, hai đường chéo luôn bằng nhau và vuông góc với nhau tại trung điểm của mỗi đường."
+            },
+            {
+                level: "Cơ bản",
+                levelClass: "level-1",
+                q: "Câu 4: Một hình lục giác đều được ghép thành từ bao nhiêu hình tam giác đều bằng nhau?",
+                options: ["A. 3", "B. 4", "C. 5", "D. 6"],
+                answer: 3,
+                explain: "Khi nối tâm đối xứng của hình lục giác đều với 6 đỉnh, ta chia hình thành 6 hình tam giác đều bằng nhau."
+            },
+            {
+                level: "Cơ bản",
+                levelClass: "level-1",
+                q: "Câu 5: Trong hình lục giác đều ABCDEF, khẳng định nào sau đây là ĐÚNG?",
+                options: [
+                    "A. Các góc ở đỉnh bằng nhau và bằng 90°.",
+                    "B. Có 6 cạnh bằng nhau và 6 góc bằng nhau.",
+                    "C. Có 3 đường chéo chính không bằng nhau.",
+                    "D. Chỉ có 3 trục đối xứng."
+                ],
+                answer: 1,
+                explain: "Hình lục giác đều có 6 cạnh bằng nhau, 6 góc bằng nhau (mỗi góc 120°), 3 đường chéo chính bằng nhau và 6 trục đối xứng."
+            },
+            {
+                level: "Vận dụng",
+                levelClass: "level-2",
+                q: "Câu 6: Cho tam giác đều ABC có độ dài cạnh bằng 7 cm. Chu vi của tam giác đều ABC là:",
+                options: ["A. 14 cm", "B. 21 cm", "C. 28 cm", "D. 49 cm"],
+                answer: 1,
+                explain: "Tam giác đều có 3 cạnh bằng nhau nên chu vi là: 7 × 3 = 21 (cm)."
+            },
+            {
+                level: "Vận dụng",
+                levelClass: "level-2",
+                q: "Câu 7: Một hình vuông có diện tích bằng 64 cm². Độ dài cạnh của hình vuông đó là:",
+                options: ["A. 6 cm", "B. 7 cm", "C. 8 cm", "D. 16 cm"],
+                answer: 2,
+                explain: "Vì diện tích hình vuông bằng cạnh nhân với chính nó mà 8 × 8 = 64 nên độ dài cạnh là 8 cm."
+            },
+            {
+                level: "Vận dụng",
+                levelClass: "level-2",
+                q: "Câu 8: Một mảnh vườn hình vuông có chu vi bằng 32 m. Diện tích của mảnh vườn đó là:",
+                options: ["A. 64 m²", "B. 32 m²", "C. 16 m²", "D. 128 m²"],
+                answer: 0,
+                explain: "Độ dài cạnh mảnh vườn là: 32 : 4 = 8 (m). Diện tích mảnh vườn là: 8 × 8 = 64 (m²)."
+            },
+            {
+                level: "Vận dụng",
+                levelClass: "level-2",
+                q: "Câu 9: Một bảng chỉ đường hình lục giác đều có độ dài một cạnh là 30 cm. Tổng độ dài các cạnh của bảng chỉ đường đó là:",
+                options: ["A. 90 cm", "B. 120 cm", "C. 150 cm", "D. 180 cm"],
+                answer: 3,
+                explain: "Hình lục giác đều có 6 cạnh bằng nhau nên tổng độ dài các cạnh (chu vi) là: 30 × 6 = 180 (cm)."
+            },
+            {
+                level: "Vận dụng",
+                levelClass: "level-2",
+                q: "Câu 10: Một sợi dây thép được uốn thành hình tam giác đều có chu vi 36 cm. Nếu duỗi thẳng sợi dây đó rồi uốn thành hình vuông thì cạnh hình vuông dài:",
+                options: ["A. 6 cm", "B. 8 cm", "C. 9 cm", "D. 12 cm"],
+                answer: 2,
+                explain: "Chiều dài sợi dây không đổi là 36 cm. Khi uốn thành hình vuông, cạnh hình vuông là: 36 : 4 = 9 (cm)."
+            },
+            {
+                level: "Nâng cao",
+                levelClass: "level-3",
+                q: "Câu 11: Một sân chơi hình vuông diện tích 100 m². Người ta dùng các viên gạch hình vuông cạnh 50 cm để lát kín sân. Số viên gạch cần dùng là:",
+                options: ["A. 200 viên", "B. 400 viên", "C. 100 viên", "D. 50 viên"],
+                answer: 1,
+                explain: "Đổi 100 m² = 1.000.000 cm². Diện tích 1 viên gạch là 50 × 50 = 2.500 cm². Số gạch cần dùng: 1.000.000 : 2.500 = 400 (viên)."
+            },
+            {
+                level: "Nâng cao",
+                levelClass: "level-3",
+                q: "Câu 12: Ghép 3 hình tam giác đều có cùng cạnh bằng 5 cm sát nhau thành một hình thang cân. Chu vi của hình thang cân tạo thành là:",
+                options: ["A. 15 cm", "B. 20 cm", "C. 25 cm", "D. 30 cm"],
+                answer: 2,
+                explain: "Hình thang cân tạo thành có đáy lớn gồm 2 cạnh (10 cm), đáy nhỏ 5 cm, và 2 cạnh bên mỗi cạnh 5 cm. Chu vi = 10 + 5 + 5 + 5 = 25 (cm)."
+            },
+            {
+                level: "Nâng cao",
+                levelClass: "level-3",
+                q: "Câu 13: Cho miếng bìa hình vuông có chu vi 48 cm. Cắt bỏ ở mỗi góc của hình vuông đó một hình vuông nhỏ cạnh 2 cm. Chu vi miếng bìa còn lại là:",
+                options: ["A. 40 cm", "B. 48 cm", "C. 56 cm", "D. 64 cm"],
+                answer: 1,
+                explain: "Khi cắt bỏ hình vuông nhỏ ở mỗi góc, các đoạn thẳng lõm vào có tổng độ dài đúng bằng phần góc bị cắt đi, nên chu vi không đổi và vẫn bằng 48 cm."
+            },
+            {
+                level: "Nâng cao",
+                levelClass: "level-3",
+                q: "Câu 14: Cho hình lục giác đều ABCDEF. Nối ba đỉnh A, C, E ta được tam giác ACE. Tam giác ACE là tam giác gì?",
+                options: [
+                    "A. Tam giác vuông",
+                    "B. Tam giác cân nhưng không đều",
+                    "C. Tam giác đều",
+                    "D. Tam giác tù"
+                ],
+                answer: 2,
+                explain: "Do tính đối xứng của lục giác đều ABCDEF, ba đoạn thẳng AC, CE, EA có độ dài bằng nhau nên tam giác ACE là tam giác đều."
+            },
+            {
+                level: "Nâng cao",
+                levelClass: "level-3",
+                q: "Câu 15: Trong các hình sau: Tam giác đều, Hình vuông, Ngũ giác đều, Lục giác đều. Hình nào KHÔNG thể lát kín mặt phẳng (không chồng lấn, không khe hở)?",
+                options: [
+                    "A. Hình tam giác đều",
+                    "B. Hình vuông",
+                    "C. Hình ngũ giác đều",
+                    "D. Hình lục giác đều"
+                ],
+                answer: 2,
+                explain: "Góc của hình ngũ giác đều bằng 108°, không phải ước của 360° nên không thể ghép khít quanh một đỉnh để lát kín mặt phẳng."
+            }
+        ];
+
+        let score = 0;
+        const container = document.getElementById("quiz-container");
+        const scoreEl = document.getElementById("score");
+        document.getElementById("total").textContent = questions.length;
+
+        function renderQuiz() {
+            container.innerHTML = "";
+            score = 0;
+            scoreEl.textContent = score;
+
+            questions.forEach((item, qIndex) => {
+                const card = document.createElement("div");
+                card.className = "question-card";
+
+                const badge = document.createElement("span");
+                badge.className = `level-badge ${item.levelClass}`;
+                badge.textContent = item.level;
+                card.appendChild(badge);
+
+                const title = document.createElement("div");
+                title.className = "question-title";
+                title.textContent = item.q;
+                card.appendChild(title);
+
+                const optionsDiv = document.createElement("div");
+                optionsDiv.className = "options";
+
+                const expDiv = document.createElement("div");
+                expDiv.className = "explanation";
+
+                item.options.forEach((optText, oIndex) => {
+                    const btn = document.createElement("button");
+                    btn.className = "option-btn";
+                    btn.textContent = optText;
+
+                    btn.onclick = () => {
+                        const allBtns = optionsDiv.querySelectorAll(".option-btn");
+                        allBtns.forEach(b => b.disabled = true);
+
+                        if (oIndex === item.answer) {
+                            btn.classList.add("correct");
+                            score++;
+                            scoreEl.textContent = score;
+                            expDiv.classList.add("show", "exp-correct");
+                            expDiv.innerHTML = `<strong>Chính xác!</strong> ${item.explain}`;
+                        } else {
+                            btn.classList.add("wrong");
+                            allBtns[item.answer].classList.add("correct");
+                            expDiv.classList.add("show", "exp-wrong");
+                            expDiv.innerHTML = `<strong>Chưa đúng!</strong> ${item.explain}`;
+                        }
+                    };
+
+                    optionsDiv.appendChild(btn);
+                });
+
+                card.appendChild(optionsDiv);
+                card.appendChild(expDiv);
+                container.appendChild(card);
+            });
+        }
+
+        function resetQuiz() {
+            renderQuiz();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        renderQuiz();
+    </script>
+</body>
+</html>
