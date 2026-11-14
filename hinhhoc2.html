@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Toán 6 - Fanpage Học Cùng Con</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --correct-bg: #dcfce7;
+            --correct-border: #16a34a;
+            --correct-text: #14532d;
+            --wrong-bg: #fee2e2;
+            --wrong-border: #dc2626;
+            --wrong-text: #7f1d1d;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .fanpage-badge {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 999px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.95;
+        }
+
+        .score-bar {
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
+            padding: 6px 16px;
+            display: inline-flex;
+            gap: 16px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 20px auto;
+            padding: 0 14px;
+        }
+
+        .question-card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .q-badge {
+            background: #eff6ff;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .q-level {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .q-text {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: #0f172a;
+        }
+
+        .svg-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .svg-box svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            width: 100%;
+            padding: 13px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--text);
+            font-size: 0.98rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: #93c5fd;
+            background: #f8fafc;
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-letter {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Trạng thái đúng */
+        .option-btn.correct {
+            background-color: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: var(--correct-text) !important;
+            font-weight: 600;
+        }
+
+        .option-btn.correct .option-letter {
+            background-color: var(--correct-border);
+            color: white;
+        }
+
+        /* Trạng thái sai */
+        .option-btn.wrong {
+            background-color: var(--wrong-bg) !important;
+            border-color: var(--wrong-border) !important;
+            color: var(--wrong-text) !important;
+            font-weight: 600;
+        }
+
+        .option-btn.wrong .option-letter {
+            background-color: var(--wrong-border);
+            color: white;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            background: #f8fafc;
+            border-left: 4px solid var(--primary);
+            color: #334155;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .reset-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 11px 24px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.98);
+        }
+
+        .page-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .page-footer strong {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="fanpage-badge">📘 Fanpage: Học Cùng Con</div>
+    <h1>TRẮC NGHIỆM TOÁN LỚP 6</h1>
+    <p>Chủ đề: Hình tam giác đều • Hình vuông • Hình lục giác đều</p>
+    <div class="score-bar">
+        <span>Đã làm: <span id="done-count">0</span>/15</span>
+        <span>Đúng: <span id="correct-count">0</span></span>
+        <span>Điểm: <span id="score-val">0.0</span></span>
+    </div>
+</div>
+
+<div class="container" id="quiz-container"></div>
+
+<div class="page-footer">
+    Tài liệu biên soạn & chia sẻ bởi Fanpage <strong>Học Cùng Con</strong>
+</div>
+
+<div class="footer-bar">
+    <button class="reset-btn" onclick="resetQuiz()">🔄 Làm lại từ đầu</button>
+</div>
+
+<script>
+const questions = [
+    {
+        level: "Cơ bản",
+        q: "Câu 1: Hình tam giác đều có bao nhiêu trục đối xứng?",
+        svg: `<svg width="180" height="155" viewBox="0 0 180 155">
+                <polygon points="90,20 25,132 155,132" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/>
+                <line x1="90" y1="8" x2="90" y2="145" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,4"/>
+                <line x1="15" y1="138" x2="132" y2="70" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,4"/>
+                <line x1="165" y1="138" x2="48" y2="70" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,4"/>
+                <text x="85" y="16" font-size="12" font-weight="bold" fill="#1e293b">A</text>
+                <text x="12" y="138" font-size="12" font-weight="bold" fill="#1e293b">B</text>
+                <text x="158" y="138" font-size="12" font-weight="bold" fill="#1e293b">C</text>
+              </svg>`,
+        options: ["1 trục đối xứng", "2 trục đối xứng", "3 trục đối xứng", "6 trục đối xứng"],
+        answer: 2,
+        exp: "Tam giác đều có 3 trục đối xứng đi qua mỗi đỉnh và trung điểm của cạnh đối diện (như 3 đường nét đứt màu đỏ)."
+    },
+    {
+        level: "Cơ bản",
+        q: "Câu 2: Hình vuông có bao nhiêu góc vuông?",
+        svg: `<svg width="160" height="150" viewBox="0 0 160 150">
+                <rect x="35" y="25" width="90" height="90" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+                <polyline points="35,37 47,37 47,25" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+                <polyline points="113,25 113,37 125,37" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+                <polyline points="125,103 113,103 113,115" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+                <polyline points="47,115 47,103 35,103" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+                <text x="22" y="22" font-size="12" font-weight="bold">A</text>
+                <text x="130" y="22" font-size="12" font-weight="bold">B</text>
+                <text x="130" y="125" font-size="12" font-weight="bold">C</text>
+                <text x="22" y="125" font-size="12" font-weight="bold">D</text>
+              </svg>`,
+        options: ["2 góc vuông", "3 góc vuông", "4 góc vuông", "6 góc vuông"],
+        answer: 2,
+        exp: "Hình vuông có 4 góc ở 4 đỉnh đều là góc vuông (bằng 90°)."
+    },
+    {
+        level: "Cơ bản",
+        q: "Câu 3: Một hình lục giác đều được tạo thành từ bao nhiêu hình tam giác đều bằng nhau?",
+        svg: `<svg width="180" height="160" viewBox="0 0 180 160">
+                <polygon points="90,15 146,47.5 146,112.5 90,145 34,112.5 34,47.5" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+                <line x1="90" y1="15" x2="90" y2="145" stroke="#d97706" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <line x1="34" y1="47.5" x2="146" y2="112.5" stroke="#d97706" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <line x1="146" y1="47.5" x2="34" y2="112.5" stroke="#d97706" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <circle cx="90" cy="80" r="3.5" fill="#dc2626"/>
+                <text x="86" y="70" font-size="12" font-weight="bold" fill="#dc2626">O</text>
+              </svg>`,
+        options: ["3 tam giác đều", "4 tam giác đều", "5 tam giác đều", "6 tam giác đều"],
+        answer: 3,
+        exp: "Nối tâm O của hình lục giác đều với 6 đỉnh, ta chia hình thành 6 hình tam giác đều bằng nhau."
+    },
+    {
+        level: "Cơ bản",
+        q: "Câu 4: Cho tam giác đều ABC có độ dài cạnh bằng 7 cm. Chu vi của tam giác đều ABC là:",
+        svg: `<svg width="170" height="150" viewBox="0 0 170 150">
+                <polygon points="85,20 25,124 145,124" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2.5"/>
+                <line x1="51" y1="70" x2="59" y2="75" stroke="#4f46e5" stroke-width="2"/>
+                <line x1="119" y1="70" x2="111" y2="75" stroke="#4f46e5" stroke-width="2"/>
+                <line x1="85" y1="119" x2="85" y2="129" stroke="#4f46e5" stroke-width="2"/>
+                <text x="80" y="15" font-size="12" font-weight="bold">A</text>
+                <text x="12" y="130" font-size="12" font-weight="bold">B</text>
+                <text x="148" y="130" font-size="12" font-weight="bold">C</text>
+                <text x="20" y="72" font-size="12" fill="#1e293b" font-weight="600">7 cm</text>
+              </svg>`,
+        options: ["14 cm", "21 cm", "28 cm", "49 cm"],
+        answer: 1,
+        exp: "Tam giác đều có 3 cạnh bằng nhau nên chu vi là: 7 × 3 = 21 (cm)."
+    },
+    {
+        level: "Cơ bản",
+        q: "Câu 5: Một hình vuông có diện tích bằng 64 cm². Độ dài cạnh của hình vuông đó là:",
+        svg: `<svg width="160" height="145" viewBox="0 0 160 145">
+                <rect x="35" y="20" width="90" height="90" fill="#fce7f3" stroke="#db2777" stroke-width="2.5"/>
+                <text x="53" y="70" font-size="13" font-weight="bold" fill="#9d174d">S = 64 cm²</text>
+                <text x="68" y="128" font-size="12" font-weight="bold" fill="#1e293b">a = ?</text>
+              </svg>`,
+        options: ["6 cm", "7 cm", "8 cm", "16 cm"],
+        answer: 2,
+        exp: "Diện tích hình vuông bằng cạnh nhân chính nó (a × a = 64). Vì 8 × 8 = 64 nên cạnh hình vuông là 8 cm."
+    },
+    {
+        level: "Cơ bản",
+        q: "Câu 6: Trong hình lục giác đều ABCDEF, khẳng định nào sau đây là ĐÚNG?",
+        svg: `<svg width="180" height="160" viewBox="0 0 180 160">
+                <polygon points="90,20 142,50 142,110 90,140 38,110 38,50" fill="#ecfdf5" stroke="#059669" stroke-width="2.5"/>
+                <text x="85" y="15" font-size="12" font-weight="bold">A</text>
+                <text x="147" y="52" font-size="12" font-weight="bold">B</text>
+                <text x="147" y="115" font-size="12" font-weight="bold">C</text>
+                <text x="85" y="154" font-size="12" font-weight="bold">D</text>
+                <text x="24" y="115" font-size="12" font-weight="bold">E</text>
+                <text x="24" y="52" font-size="12" font-weight="bold">F</text>
+              </svg>`,
+        options: [
+            "Các góc ở đỉnh bằng nhau và bằng 90°",
+            "Có 6 cạnh bằng nhau và 6 góc bằng nhau",
+            "Có 4 trục đối xứng",
+            "Các đường chéo chính không bằng nhau"
+        ],
+        answer: 1,
+        exp: "Hình lục giác đều có 6 cạnh bằng nhau, 6 góc bằng nhau (mỗi góc 120°) và 3 đường chéo chính bằng nhau."
+    },
+    {
+        level: "Thông hiểu",
+        q: "Câu 7: Số đo mỗi góc ở đỉnh của một hình tam giác đều bằng:",
+        svg: `<svg width="170" height="145" viewBox="0 0 170 145">
+                <polygon points="85,18 25,122 145,122" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+                <path d="M 73,39 A 24,24 0 0,0 97,39" fill="none" stroke="#dc2626" stroke-width="2"/>
+                <path d="M 48,122 A 23,23 0 0,0 37,102" fill="none" stroke="#dc2626" stroke-width="2"/>
+                <path d="M 133,102 A 23,23 0 0,0 122,122" fill="none" stroke="#dc2626" stroke-width="2"/>
+                <text x="79" y="56" font-size="12" font-weight="bold" fill="#dc2626">?</text>
+              </svg>`,
+        options: ["45°", "60°", "90°", "120°"],
+        answer: 1,
+        exp: "Tổng ba góc trong một tam giác là 180°. Tam giác đều có 3 góc bằng nhau nên mỗi góc bằng 180° : 3 = 60°."
+    },
+    {
+        level: "Thông hiểu",
+        q: "Câu 8: Phát biểu nào sau đây là SAI khi nói về hình vuông?",
+        svg: `<svg width="160" height="145" viewBox="0 0 160 145">
+                <rect x="35" y="20" width="90" height="90" fill="#f1f5f9" stroke="#334155" stroke-width="2.5"/>
+                <line x1="35" y1="20" x2="125" y2="110" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="4,3"/>
+                <line x1="125" y1="20" x2="35" y2="110" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="4,3"/>
+              </svg>`,
+        options: [
+            "Hình vuông có 4 cạnh bằng nhau",
+            "Hình vuông có 4 góc vuông",
+            "Hai đường chéo của hình vuông không bằng nhau",
+            "Hình vuông có 4 trục đối xứng"
+        ],
+        answer: 2,
+        exp: "Phát biểu C sai vì hai đường chéo của hình vuông bằng nhau, vuông góc với nhau và cắt nhau tại trung điểm mỗi đường."
+    },
+    {
+        level: "Vận dụng",
+        q: "Câu 9: Một sợi dây kim loại được uốn thành một hình tam giác đều có chu vi 36 cm. Nếu duỗi thẳng sợi dây đó rồi uốn thành một hình vuông thì độ dài cạnh hình vuông là:",
+        svg: `<svg width="260" height="120" viewBox="0 0 260 120">
+                <polygon points="55,18 15,90 95,90" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/>
+                <text x="32" y="110" font-size="11" font-weight="bold">P = 36 cm</text>
+                <line x1="112" y1="58" x2="148" y2="58" stroke="#64748b" stroke-width="2"/>
+                <polygon points="148,54 156,58 148,62" fill="#64748b"/>
+                <rect x="172" y="22" width="68" height="68" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+                <text x="188" y="110" font-size="11" font-weight="bold">a = ?</text>
+              </svg>`,
+        options: ["6 cm", "8 cm", "9 cm", "12 cm"],
+        answer: 2,
+        exp: "Chiều dài sợi dây không đổi bằng 36 cm. Khi uốn thành hình vuông, chu vi hình vuông là 36 cm nên cạnh là 36 : 4 = 9 (cm)."
+    },
+    {
+        level: "Vận dụng",
+        q: "Câu 10: Một sân chơi hình vuông có diện tích 100 m². Người ta dùng các viên gạch hình vuông cạnh 50 cm để lát kín sân chơi đó. Số viên gạch cần dùng là:",
+        svg: `<svg width="180" height="145" viewBox="0 0 180 145">
+                <rect x="35" y="15" width="100" height="100" fill="#fef9c3" stroke="#ca8a04" stroke-width="2.5"/>
+                <line x1="60" y1="15" x2="60" y2="115" stroke="#ca8a04" stroke-width="1"/>
+                <line x1="85" y1="15" x2="85" y2="115" stroke="#ca8a04" stroke-width="1"/>
+                <line x1="110" y1="15" x2="110" y2="115" stroke="#ca8a04" stroke-width="1"/>
+                <line x1="35" y1="40" x2="135" y2="40" stroke="#ca8a04" stroke-width="1"/>
+                <line x1="35" y1="65" x2="135" y2="65" stroke="#ca8a04" stroke-width="1"/>
+                <line x1="35" y1="90" x2="135" y2="90" stroke="#ca8a04" stroke-width="1"/>
+                <rect x="35" y="15" width="25" height="25" fill="#f59e0b" opacity="0.6"/>
+                <text x="45" y="133" font-size="11" font-weight="bold">Sân 100 m² • Gạch 50 cm</text>
+              </svg>`,
+        options: ["200 viên", "400 viên", "100 viên", "50 viên"],
+        answer: 1,
+        exp: "Đổi 100 m² = 1 000 000 cm². Diện tích 1 viên gạch là 50 × 50 = 2 500 (cm²). Số viên gạch cần dùng: 1 000 000 : 2 500 = 400 (viên)."
+    },
+    {
+        level: "Vận dụng",
+        q: "Câu 11: Cho hình lục giác đều ABCDEF có tâm O. Tam giác nào sau đây là tam giác đều?",
+        svg: `<svg width="180" height="160" viewBox="0 0 180 160">
+                <polygon points="90,20 142,50 142,110 90,140 38,110 38,50" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+                <polygon points="90,80 90,20 142,50" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.2"/>
+                <circle cx="90" cy="80" r="3" fill="#dc2626"/>
+                <text x="85" y="15" font-size="12" font-weight="bold">A</text>
+                <text x="147" y="52" font-size="12" font-weight="bold">B</text>
+                <text x="147" y="115" font-size="12" font-weight="bold">C</text>
+                <text x="85" y="154" font-size="12" font-weight="bold">D</text>
+                <text x="24" y="115" font-size="12" font-weight="bold">E</text>
+                <text x="24" y="52" font-size="12" font-weight="bold">F</text>
+                <text x="76" y="85" font-size="12" font-weight="bold" fill="#dc2626">O</text>
+              </svg>`,
+        options: ["Tam giác OAB", "Tam giác OAC", "Tam giác ABD", "Tam giác OAD"],
+        answer: 0,
+        exp: "Trong hình lục giác đều tâm O, tam giác tạo bởi tâm O và hai đỉnh liên tiếp (như tam giác OAB) luôn là tam giác đều."
+    },
+    {
+        level: "Vận dụng",
+        q: "Câu 12: Người ta ghép 3 hình tam giác đều có cùng cạnh bằng 5 cm sát vào nhau để tạo thành một hình thang cân. Chu vi của hình thang cân tạo thành là:",
+        svg: `<svg width="220" height="120" viewBox="0 0 220 120">
+                <polygon points="75,25 40,86 110,86" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                <polygon points="145,25 110,86 180,86" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                <polygon points="75,25 145,25 110,86" fill="#93c5fd" stroke="#2563eb" stroke-width="2"/>
+                <text x="100" y="18" font-size="11" font-weight="bold">5 cm</text>
+                <text x="65" y="103" font-size="11" font-weight="bold">5 cm</text>
+                <text x="135" y="103" font-size="11" font-weight="bold">5 cm</text>
+                <text x="32" y="55" font-size="11" font-weight="bold">5 cm</text>
+                <text x="168" y="55" font-size="11" font-weight="bold">5 cm</text>
+              </svg>`,
+        options: ["15 cm", "20 cm", "25 cm", "30 cm"],
+        answer: 2,
+        exp: "Đường viền xung quanh hình thang cân gồm 5 đoạn thẳng bằng nhau (đáy nhỏ 1 cạnh, 2 cạnh bên mỗi bên 1 cạnh, đáy lớn 2 cạnh). Chu vi = 5 × 5 = 25 (cm)."
+    },
+    {
+        level: "Nâng cao",
+        q: "Câu 13: Trong các hình sau: (1) Hình tam giác đều, (2) Hình vuông, (3) Hình ngũ giác đều, (4) Hình lục giác đều. Hình nào KHÔNG THỂ dùng để lát kín một mặt phẳng mà không chồng lên nhau và không có khoảng hở?",
+        svg: `<svg width="240" height="100" viewBox="0 0 240 100">
+                <polygon points="35,20 12,65 58,65" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                <rect x="75" y="22" width="42" height="42" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+                <polygon points="152,20 173,36 165,62 139,62 131,36" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+                <polygon points="208,20 227,31 227,53 208,64 189,53 189,31" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                <text x="22" y="85" font-size="10">60°</text>
+                <text x="88" y="85" font-size="10">90°</text>
+                <text x="142" y="85" font-size="10" fill="#dc2626" font-weight="bold">108°</text>
+                <text x="198" y="85" font-size="10">120°</text>
+              </svg>`,
+        options: ["Hình tam giác đều", "Hình vuông", "Hình ngũ giác đều", "Hình lục giác đều"],
+        answer: 2,
+        exp: "Góc của ngũ giác đều là 108°. Vì 360° không chia hết cho 108° nên các hình ngũ giác đều không thể ghép khít quanh một đỉnh để lát kín mặt phẳng."
+    },
+    {
+        level: "Nâng cao",
+        q: "Câu 14: Cho một miếng bìa hình vuông có chu vi là 48 cm. Người ta cắt bỏ đi ở mỗi góc một hình vuông nhỏ cạnh 2 cm. Chu vi của phần miếng bìa còn lại là:",
+        svg: `<svg width="160" height="150" viewBox="0 0 160 150">
+                <path d="M 45,20 L 115,20 L 115,35 L 130,35 L 130,105 L 115,105 L 115,120 L 45,120 L 45,105 L 30,105 L 30,35 L 45,35 Z" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2.2"/>
+                <rect x="30" y="20" width="15" height="15" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="3,2"/>
+                <rect x="115" y="20" width="15" height="15" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="3,2"/>
+                <rect x="115" y="105" width="15" height="15" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="3,2"/>
+                <rect x="30" y="105" width="15" height="15" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="3,2"/>
+              </svg>`,
+        options: ["40 cm", "48 cm", "56 cm", "64 cm"],
+        answer: 1,
+        exp: "Khi cắt bỏ hình vuông nhỏ ở 4 góc, các cạnh thụt vào có tổng độ dài đúng bằng các đoạn bị cắt đi ở viền ngoài. Do đó chu vi không đổi và vẫn bằng 48 cm."
+    },
+    {
+        level: "Nâng cao",
+        q: "Câu 15: Cho hình lục giác đều ABCDEF. Nối ba đỉnh không liên tiếp A, C, E ta được tam giác ACE. Tam giác ACE là tam giác gì?",
+        svg: `<svg width="180" height="160" viewBox="0 0 180 160">
+                <polygon points="90,20 142,50 142,110 90,140 38,110 38,50" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+                <polygon points="90,20 142,110 38,110" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/>
+                <text x="85" y="15" font-size="12" font-weight="bold">A</text>
+                <text x="147" y="52" font-size="12" font-weight="bold">B</text>
+                <text x="147" y="115" font-size="12" font-weight="bold">C</text>
+                <text x="85" y="154" font-size="12" font-weight="bold">D</text>
+                <text x="24" y="115" font-size="12" font-weight="bold">E</text>
+                <text x="24" y="52" font-size="12" font-weight="bold">F</text>
+              </svg>`,
+        options: ["Tam giác vuông", "Tam giác cân nhưng không đều", "Tam giác đều", "Tam giác tù"],
+        answer: 2,
+        exp: "Ba đường chéo phụ AC, CE, EA nối các đỉnh cách đều nhau của hình lục giác đều có độ dài bằng nhau nên tam giác ACE là tam giác đều."
+    }
+];
+
+let doneCount = 0;
+let correctCount = 0;
+
+function renderQuiz() {
+    const container = document.getElementById("quiz-container");
+    container.innerHTML = "";
+    const letters = ["A", "B", "C", "D"];
+
+    questions.forEach((item, qIndex) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+        card.id = `card-${qIndex}`;
+
+        let optionsHtml = "";
+        item.options.forEach((opt, oIndex) => {
+            optionsHtml += `
+                <button class="option-btn" id="btn-${qIndex}-${oIndex}" onclick="selectOption(${qIndex}, ${oIndex})">
+                    <span class="option-letter">${letters[oIndex]}</span>
+                    <span>${opt}</span>
+                </button>
+            `;
+        });
+
+        card.innerHTML = `
+            <div class="q-header">
+                <span class="q-badge">Câu ${qIndex + 1} / 15</span>
+                <span class="q-level">Mức độ: ${item.level}</span>
+            </div>
+            <div class="q-text">${item.q.replace(/^Câu \d+:\s*/, "")}</div>
+            <div class="svg-box">${item.svg}</div>
+            <div class="options">${optionsHtml}</div>
+            <div class="explanation" id="exp-${qIndex}">
+                <strong>💡 Giải thích:</strong> ${item.exp}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function selectOption(qIndex, selectedIndex) {
+    const item = questions[qIndex];
+    const correctIndex = item.answer;
+
+    // Vô hiệu hóa tất cả các nút của câu hỏi này
+    for (let i = 0; i < item.options.length; i++) {
+        const btn = document.getElementById(`btn-${qIndex}-${i}`);
+        btn.disabled = true;
+    }
+
+    const selectedBtn = document.getElementById(`btn-${qIndex}-${selectedIndex}`);
+    const correctBtn = document.getElementById(`btn-${qIndex}-${correctIndex}`);
+
+    if (selectedIndex === correctIndex) {
+        selectedBtn.classList.add("correct");
+        correctCount++;
+    } else {
+        selectedBtn.classList.add("wrong");
+        correctBtn.classList.add("correct");
+    }
+
+    doneCount++;
+    updateScore();
+
+    const expBox = document.getElementById(`exp-${qIndex}`);
+    expBox.classList.add("show");
+}
+
+function updateScore() {
+    document.getElementById("done-count").innerText = doneCount;
+    document.getElementById("correct-count").innerText = correctCount;
+    const score = ((correctCount / questions.length) * 10).toFixed(1);
+    document.getElementById("score-val").innerText = score;
+}
+
+function resetQuiz() {
+    doneCount = 0;
+    correctCount = 0;
+    updateScore();
+    renderQuiz();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+renderQuiz();
+</script>
+</body>
+</html>
